@@ -6,20 +6,19 @@ import { useEffect, useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
-  const [quote, setQuote] = useState('');
+export async function getServerSideProps() {
+  const response = await fetch('https://zorcmspowc.execute-api.ap-northeast-2.amazonaws.com/prod/quote');
+  const data = await response.json();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('https://zorcmspowc.execute-api.ap-northeast-2.amazonaws.com/prod/quote');
-      const data = await response.json();
-      setQuote(data);
-      
-      console.log(`Client-side rendered page: "${data.message}"`);
+  console.log(`Server-side rendered page: "${data.message}"`);
+  return {
+    props: {
+      quote: data
     }
-    fetchData();
-  }, []);
+  }
+}
 
+export default function Home({quote}) {
   return (
     <>
       <Head>
@@ -30,7 +29,7 @@ export default function Home() {
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
             <div className={styles.card}>
-                <h1>CSR</h1>
+                <h1>SSR</h1>
             </div>
             <div className={styles.center}>
                 <div className={styles.description}>
@@ -43,7 +42,7 @@ export default function Home() {
                 </div>
             </div>
             <div>
-                <a href="ssr">server-side rendered page 에서 보기</a>
+                <a href="/">client-side rendered page 에서 보기</a>
             </div>
         </main>
     </>
